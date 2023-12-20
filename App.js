@@ -4,9 +4,23 @@ import { StyleSheet, ImageBackground, SafeAreaView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import StartGameScreen from "./screens/StartGameScreen";
 import GameScreen from "./screens/GameScreen";
+import GameOver from "./screens/GameOver";
+import colors from "./utils/colors";
+import {useFonts} from "expo-font";
+import AppLoading from 'expo-app-loading'
 
 export default function App() {
   const [userNumber, setUserNumber] = useState(null);
+  const [gameIsOver, setGameIsover] = useState(false)
+
+  const [fontsLoaded] = useFonts({
+    'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
+    'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf')
+  })
+  if (!fontsLoaded) {
+    return <AppLoading />
+  }
+  
 
   let screen = (
     <StartGameScreen
@@ -14,10 +28,15 @@ export default function App() {
     />
   );
   if (userNumber) {
-    screen = <GameScreen />;
+    screen = <GameScreen userNumber={userNumber} onGameOver={(value) => {setGameIsover(value)}}/>;
   }
+
+  if (gameIsOver && userNumber) {
+    return <GameOver />
+  }
+
   return (
-    <LinearGradient colors={["#ffffff", "#72063c"]} style={styles.rootScreen}>
+    <LinearGradient colors={[colors.secondary500, colors.primary500]} style={styles.rootScreen}>
       <ImageBackground
         source={require("./assets/images/background.png")}
         resizeMode="cover"
